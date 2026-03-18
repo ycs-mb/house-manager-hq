@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg
+htmlcov/
+.coverage
+coverage.xml
+
+# uv
+.uv/
+
+# Node / JS
+node_modules/
+dist/
+.next/
+.nuxt/
+.output/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Docker
+.docker/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Build artifacts
+*.pyc
+*.pyo
