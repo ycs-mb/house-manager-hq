@@ -1,0 +1,22 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Approval {
+  id          String    @id @default(cuid())
+  agentName   String
+  requestType String
+  description String
+  context     String?
+  status      String    @default("pending")
+  note        String?
+  createdAt   DateTime  @default(now())
+  resolvedAt  DateTime?
+}
