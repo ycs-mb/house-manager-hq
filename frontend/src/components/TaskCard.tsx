@@ -1,58 +1,57 @@
-import type { Task, TaskStatus } from '@/api/tasks'
+import { Link } from 'react-router-dom'
+import type { Task } from '@/api/tasks'
+import clsx from 'clsx'
 
-const STATUS_LABELS: Record<TaskStatus, string> = {
-  pending: 'Pending',
-  in_progress: 'In Progress',
-  in_review: 'In Review',
-  done: 'Done',
+const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
+  pending: { label: 'Pending', className: 'bg-slate-700 text-slate-300' },
+  in_progress: { label: 'In Progress', className: 'bg-blue-500/20 text-blue-400' },
+  in_review: { label: 'In Review', className: 'bg-amber-500/20 text-amber-400' },
+  done: { label: 'Done', className: 'bg-emerald-500/20 text-emerald-400' },
+  failed: { label: 'Failed', className: 'bg-red-500/20 text-red-400' },
 }
 
-const STATUS_COLORS: Record<TaskStatus, string> = {
-  pending: '#94a3b8',
-  in_progress: '#3b82f6',
-  in_review: '#f59e0b',
-  done: '#22c55e',
+const PRIORITY_CONFIG: Record<string, { label: string; className: string }> = {
+  low: { label: 'Low', className: 'text-slate-500' },
+  medium: { label: 'Medium', className: 'text-slate-400' },
+  high: { label: 'High', className: 'text-amber-400' },
+  critical: { label: 'Critical', className: 'text-red-400' },
 }
 
 interface TaskCardProps {
   task: Task
-  onStatusChange?: (id: string, status: TaskStatus) => void
 }
 
-export function TaskCard({ task, onStatusChange }: TaskCardProps) {
+export function TaskCard({ task }: TaskCardProps) {
+  const status = STATUS_CONFIG[task.status] ?? { label: task.status, className: 'bg-slate-700 text-slate-300' }
+  const priority = PRIORITY_CONFIG[task.priority] ?? { label: task.priority, className: 'text-slate-400' }
+
   return (
-    <div style={{ border: '1px solid #e2e8f0', borderRadius: 8, padding: 16, marginBottom: 12 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 style={{ margin: 0, fontSize: 16 }}>{task.title}</h3>
-        <span
-          style={{
-            backgroundColor: STATUS_COLORS[task.status],
-            color: 'white',
-            padding: '2px 10px',
-            borderRadius: 12,
-            fontSize: 12,
-          }}
-        >
-          {STATUS_LABELS[task.status]}
+    <Link
+      to={`/tasks/${task.id}`}
+      className="block bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl p-4 transition-colors"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex-1 min-w-0">
+          <h3 className="font-medium text-white truncate">{task.title}</h3>
+          {task.description && (
+            <p className="text-sm text-slate-400 mt-0.5 line-clamp-1">{task.description}</p>
+          )}
+        </div>
+        <span className={clsx('shrink-0 text-xs font-medium px-2 py-1 rounded-full', status.className)}>
+          {status.label}
         </span>
       </div>
-      {task.description && (
-        <p style={{ margin: '8px 0 0', color: '#64748b', fontSize: 14 }}>{task.description}</p>
-      )}
-      {onStatusChange && task.status !== 'done' && (
-        <button
-          style={{ marginTop: 12, padding: '6px 12px', cursor: 'pointer' }}
-          onClick={() => onStatusChange(task.id, getNextStatus(task.status))}
-        >
-          Move to {STATUS_LABELS[getNextStatus(task.status)]}
-        </button>
-      )}
-    </div>
-  )
-}
 
-function getNextStatus(current: TaskStatus): TaskStatus {
-  const order: TaskStatus[] = ['pending', 'in_progress', 'in_review', 'done']
-  const idx = order.indexOf(current)
-  return order[Math.min(idx + 1, order.length - 1)]
+      <div className="flex items-center gap-3 mt-3 text-xs text-slate-500">
+        <span className={priority.className}>{priority.label} priority</span>
+        {task.github_repo && (
+          <span className="truncate">{task.github_repo}</span>
+        )}
+        {task.latest_run?.github_pr_url && (
+          <span className="text-indigo-400 truncate">PR opened</span>
+        )}
+        <span className="ml-auto">{new Date(task.created_at).toLocaleDateString()}</span>
+      </div>
+    </Link>
+  )
 }

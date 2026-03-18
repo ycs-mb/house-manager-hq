@@ -11,9 +11,20 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/agentic_platform"
     secret_key: str = "change-me-in-production"
     algorithm: str = "HS256"
-    access_token_expire_minutes: int = 30
+    access_token_expire_minutes: int = 60
 
-    cors_origins: list[str] = ["http://localhost:5173"]
+    cors_origins: list[str] = ["http://localhost:5173", "http://localhost:80", "http://localhost"]
+
+    # AI + GitHub integrations
+    anthropic_api_key: str | None = None
+    github_pat: str | None = None
+    github_target_repo: str | None = None  # default owner/repo for agent runs
+    github_webhook_secret: str | None = None
+
+    # Seed admin user (created on startup if not exists)
+    admin_email: str = "admin@agentic.local"
+    admin_password: str = "changeme"
+    admin_name: str = "Admin"
 
 
 settings = Settings()
