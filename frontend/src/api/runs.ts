@@ -1,5 +1,3 @@
-const BASE = '/api'
-
 export interface Run {
   id: string
   task_id: string
